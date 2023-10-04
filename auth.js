@@ -14,7 +14,7 @@ async function authenticate(req, res, next) {
         const user = await User.findOne({ where: { email } });
     
         if (!user) {
-          return res.status(401).send('Unauthorized');
+          return res.status(401).send('User Not Found');
           //res.send('Unauthorized');
         }
     

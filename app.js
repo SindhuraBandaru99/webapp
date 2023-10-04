@@ -6,6 +6,7 @@ const Assignment = require('./models/assignments');
 const userCreation = require('./database/UserCreation');
 
 const router = require('./database/AssignmentCreation');
+const healthRouter = require('./database/DatabaseConnection');
 
 
 
@@ -22,18 +23,16 @@ sequelize.sync({alter : true}).then(() =>{
   }) 
 
   User.hasMany(Assignment, {
-
     foreignKey: 'user_id',
-  
   });
   
   Assignment.belongsTo(User, {
-  
     foreignKey: 'user_id',
-  
   });
   
 app.use('/assignments',router);
+
+app.use('/healthz',healthRouter);
 
 
 
