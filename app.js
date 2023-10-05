@@ -18,10 +18,10 @@ app.get('/healthz', async (req, res) => {
   try {
 
       res.set('Cache-Control', 'no-cache');
-      if(Object.keys(req.body).length > 0) {
+      if(Object.keys(req.body).length >= 0) {
           res.status(400).send();
       }
-      if(Object.keys(req.query).length > 0) {
+      if(Object.keys(req.query).length >= 0) {
           res.status(400).send()
       }
       else {
