@@ -14,7 +14,7 @@
 
 - run  `npm install` to install packages
 
-- Once  node_modules is installed. create a .env file and add db details and port details.
+- Once  node_modules is installed. create a .env file and add db details and port detail
 -   `DB_HOSTNAME = localhost`
 -   `DB_PASSWORD = Vani@1972`
 -   `DB_USER = root`
