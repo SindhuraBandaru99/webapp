@@ -2,10 +2,12 @@ const fs = require('fs');
 const {User} = require('../models/index');
 const csv = require('csv-parser');
 const bcrypt = require('bcrypt');
+require('dotenv').config();
 
 
-
-const csvFilePath = '/opt/users.csv';
+const csvFilePath = process.env.CSV_FILE;
+// const csvFilePath = process.env.DB_DIALECT;
+// const csvFilePath = '/opt/users.csv';
 
 const checkEmail = async(emailId) => {
     const userEmail = await User.findOne({
