@@ -1,15 +1,25 @@
 const express =  require('express');
 const app = express();
-const mysql = require('mysql2')
-const sequelize = require('./models/index');
-const User = require('./models/user');
-const Assignment = require('./models/assignments');
+const mysql = require('mysql2/promise')
+const{sequelize,createDatabase,syncDatabase,User,Assignment} = require("./models/index")
 const userCreation = require('./database/UserCreation');
 
 const router = require('./database/AssignmentCreation');
 const healthRouter = require('./database/DatabaseConnection');
 
+(async () => {
+  try {
+    await createDatabase();
+    await sequelize.sync({ alter: true });
+    await userCreation();
 
+    app.listen(3000, () => {
+      console.log("Server running on port", 3000);
+    });
+  } catch (error) {
+    console.error("Error:", error);
+  }
+})();
 
 app.use(express.json())
 
@@ -42,12 +52,6 @@ app.all('/healthz', (req, res) => {
 })
 
 
-sequelize.sync({alter: true}).then(()=> {
-
-  userCreation() 
-
-})
-
   User.hasMany(Assignment, {
     foreignKey: 'user_id',
   });
@@ -56,14 +60,7 @@ sequelize.sync({alter: true}).then(()=> {
     foreignKey: 'user_id',
   });
   
-app.use('/assignments',router);
-
-//app.use('/healthz',healthRouter);
-
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
-});
-
+app.use('/v1/assignments',router);
 
 module.exports = app
 

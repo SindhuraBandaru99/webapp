@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const Assignment = require('../models/assignments');
-const User = require('../models/user');
+const {Assignment} = require('../models/index');
+const {User} = require('../models/index');
 const {authenticate,getBasicAuthCredentials} = require('../auth')
 
  
@@ -26,6 +26,9 @@ router.post('/', authenticate, async (req, res) => {
       if (!name || !points || !num_of_attempts || !deadline) {
         return res.status(400).json({ message: 'Invalid request body' });
       }
+      if(!Number.isInteger(num_of_attempts) || !Number.isInteger(points) ){
+        return res.status(400).json({message: 'Number of attempts and points should be integer'})
+    }
       if (assignment_created || assignment_updated) {
         return res.status(403).json({ error: 'You donot have permissions to provide assignment created or updated' });
       }
@@ -36,7 +39,7 @@ router.post('/', authenticate, async (req, res) => {
         deadline,
         user_id : userid,
     }).then((assignment) => {
-        return res.status(201).json({ assignment });
+        return res.status(201).json(assignment);
       })
       .catch((error) => {
         return res.status(400).json({ message: "Validation error for points and attempts" });
@@ -73,6 +76,9 @@ router.post('/', authenticate, async (req, res) => {
         if (!name || !points || !num_of_attempts || !deadline) {
           return res.status(400).json({ message: 'Invalid request body' });
         }
+        if(!Number.isInteger(num_of_attempts) ||!Number.isInteger(points) ){
+        return res.status(400).json({message: 'Number of attempts and Points should be integer'})
+    }
         if (assignment_created || assignment_updated) {
           return res.status(403).json({ error: 'You donot have permissions to update assignment created or updated' });
         }
@@ -83,7 +89,7 @@ router.post('/', authenticate, async (req, res) => {
           assignment.deadline = deadline;
 
         const updateAssignment = await assignment.save().then((assignment) => {
-          return res.status(201).json({ assignment });
+          return res.status(201).json(assignment);
         })
         .catch((error) => {
           return res.status(400).json({ message: "Validation error for points and attempts" });
@@ -118,7 +124,7 @@ router.post('/', authenticate, async (req, res) => {
         
             // Update assignment attributes
             await assignment.destroy();
-            return res.status(204).json(assignment);
+            return res.status(204).send();
           } catch (error) {
             console.error('Error updating assignment:', error);
             return res.status(500).json({ error: 'Internal Server Error' });
@@ -133,6 +139,9 @@ router.post('/', authenticate, async (req, res) => {
                     where: {
                       assign_id : assignment_id,
                     }})
+                    if (!assignment) {
+                      return res.status(404).json({ error: 'Assignment not found' });
+                    }
             
                 return res.status(200).json(assignment);
               } catch (error) {

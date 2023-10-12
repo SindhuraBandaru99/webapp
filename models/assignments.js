@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize')
 const sequelize = require('./index')
 
+const model = (sequelize) => {
 const Assignment = sequelize.define ('assignment', {
     assign_id : {
         type : Sequelize.UUID,
@@ -47,7 +48,8 @@ const Assignment = sequelize.define ('assignment', {
 {
    createdAt : 'assignment_created',
    updatedAt : 'assignment_updated'
-})
+});
+return Assignment;
+}
 
-
-module.exports = Assignment
+module.exports = model

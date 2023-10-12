@@ -1,5 +1,5 @@
 const fs = require('fs');
-const User = require('../models/user');
+const {User} = require('../models/index');
 const csv = require('csv-parser');
 const bcrypt = require('bcrypt');
 
@@ -17,7 +17,7 @@ const checkEmail = async(emailId) => {
       return false
     }
   }
-  const userCreation = () =>{
+  const userCreation = async () =>{
     
     fs.createReadStream(csvFilePath)
       .pipe(csv())

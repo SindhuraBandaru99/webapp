@@ -1,5 +1,5 @@
 const basicAuth = require('basic-auth');
-const User = require('./models/user');
+const {User} = require('./models/index');
 const bcrypt = require('bcrypt');
 
 

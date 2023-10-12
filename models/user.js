@@ -2,6 +2,7 @@ const Sequelize = require('sequelize')
 const sequelize = require('./index')
 const bcrypt = require('bcrypt');
 
+const model = (sequelize) => {
 const User = sequelize.define ('user', {
     user_id : {
         type:Sequelize.UUID,
@@ -39,6 +40,8 @@ const User = sequelize.define ('user', {
   }
 }, 
 {
+    createdAt : 'account_created',
+    updatedAt : 'account_updated',
     freezeTableName : true
 });
 
@@ -47,6 +50,7 @@ User.beforeCreate(async (user) => {
     const hashedPassword = await bcrypt.hash(user.password, saltRounds);
     user.password = hashedPassword;
   });
+  return User
+}
 
-
-module.exports = User
+module.exports = model
