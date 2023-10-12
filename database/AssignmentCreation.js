@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {Assignment} = require('../models/index');
-const {User} = require('../models/index');
+const { User } = require('../models/index');
 const {authenticate,getBasicAuthCredentials} = require('../auth')
 
  
@@ -27,7 +27,7 @@ router.post('/', authenticate, async (req, res) => {
         return res.status(400).json({ message: 'Invalid request body' });
       }
       if(!Number.isInteger(num_of_attempts) || !Number.isInteger(points) ){
-        return res.status(400).json({message: 'Number of attempts and points should be integer'})
+        return res.status(400).json({message: 'Type should be integer for Number of attempts and points'})
     }
       if (assignment_created || assignment_updated) {
         return res.status(403).json({ error: 'You donot have permissions to provide assignment created or updated' });
@@ -67,7 +67,7 @@ router.post('/', authenticate, async (req, res) => {
 
         
         if (!assignment) {
-          return res.status(404).json({ error: 'Assignment not found' });
+          return res.status(400).json({ error: 'Bad Request : Assignment not found' });
         }
         else if (assignment.user_id !== userid) {
             return res.status(403).json({ error: 'Unauthorized - You do not have permission to update this assignment' });
@@ -77,7 +77,7 @@ router.post('/', authenticate, async (req, res) => {
           return res.status(400).json({ message: 'Invalid request body' });
         }
         if(!Number.isInteger(num_of_attempts) ||!Number.isInteger(points) ){
-        return res.status(400).json({message: 'Number of attempts and Points should be integer'})
+        return res.status(400).json({message: 'Type should be integer for Number of attempts and points'})
     }
         if (assignment_created || assignment_updated) {
           return res.status(403).json({ error: 'You donot have permissions to update assignment created or updated' });
@@ -89,7 +89,7 @@ router.post('/', authenticate, async (req, res) => {
           assignment.deadline = deadline;
 
         const updateAssignment = await assignment.save().then((assignment) => {
-          return res.status(201).json(assignment);
+          return res.status(204).json(assignment);
         })
         .catch((error) => {
           return res.status(400).json({ message: "Validation error for points and attempts" });
@@ -106,9 +106,8 @@ router.post('/', authenticate, async (req, res) => {
         const user = await User.findOne({ where: { email } });
         const userid = user.user_id
         const assignment_id = req.params.assign_id
-        //const { name, points, num_of_attempts, deadline } = req.body;
+
         try {
-            // Check if the assignment exists and belongs to the specified user
             const assignment = await Assignment.findOne({
               where: {
                 assign_id : assignment_id,
@@ -116,7 +115,7 @@ router.post('/', authenticate, async (req, res) => {
             });
         
             if (!assignment) {
-              return res.status(404).json({ error: 'Assignment not found' });
+              return res.status(404).json({ error: 'Bad Request: Assignment not found' });
             }
             else if (assignment.user_id !== userid) {
                 return res.status(403).json({ error: 'Unauthorized - You do not have permission to Delete this assignment' });
@@ -154,7 +153,6 @@ router.post('/', authenticate, async (req, res) => {
             try {
                 // Retrieve all assignments from the database
                 const assignments = await Assignment.findAll();
-            
                 return res.status(200).json(assignments);
               } catch (error) {
                 console.error('Error retrieving assignments:', error);
