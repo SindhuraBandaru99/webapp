@@ -56,6 +56,6 @@ jobs:
           unzip packer_1.8.3_linux_amd64.zip
           sudo mv packer /usr/local/bin/
       - name : Packer Integration
-        run: packer init packer-ami.pkr.hcl
+        run: packer init .
       - name: Create AMI 
-        run: packer build packer-ami.pkr.hcl
+        run: packer build .

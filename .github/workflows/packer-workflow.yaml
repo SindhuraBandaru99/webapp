@@ -19,6 +19,6 @@ jobs:
       - name: Format Packer Checks
         run: |
           set -e
-          packer fmt -check packer-ami.pkr.hcl
-          packer validate packer-ami.pkr.hcl
+          packer fmt -check .
+          packer validate .
           echo "Validation and Packer Formatting Completed"
