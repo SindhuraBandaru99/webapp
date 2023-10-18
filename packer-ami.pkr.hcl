@@ -94,6 +94,19 @@ build {
     source      = fileexists(".env") ? ".env" : "/" # Local path to the files to be copied
     destination = "/home/admin/webapp/.env"         # Destination path on the AMI
   }
+  provisioner "file" {
+    //source      = ".env" 
+    source      = fileexists("users.csv") ? "users.csv" : "/" # Local path to the files to be copied
+    destination = "/home/admin/webapp/users.csv"              # Destination path on the AMI
+  }
+
+  provisioner "shell" {
+    inline = [
+      "sudo mv users.csv /opt/",
+      "cd webapp",
+      "npm install"
+    ]
+  }
 }
 
 
