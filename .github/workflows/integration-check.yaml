@@ -56,5 +56,5 @@ jobs:
         run: packer build packer-ami.pkr.hcl
       - name: Copy artifacts to checked-out directory
         run: |
-          cp -r ../dist/main.js .  # Replace with the actual path to your artifacts
+          cp -r build/artifact.js  # Replace with the actual path to your artifacts
         working-directory: ${{ github.workspace }}
