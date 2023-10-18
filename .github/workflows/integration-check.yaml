@@ -58,4 +58,4 @@ jobs:
       - name : Packer Integration
         run: packer init packer-ami.pkr.hcl
       - name: Create AMI 
-        run: packer build -var-file=.env packer-ami.pkr.hcl
+        run: packer build packer-ami.pkr.hcl

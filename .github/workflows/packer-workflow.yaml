@@ -14,11 +14,6 @@ jobs:
           wget https://releases.hashicorp.com/packer/1.8.3/packer_1.8.3_linux_amd64.zip
           unzip packer_1.8.3_linux_amd64.zip
           sudo mv packer /usr/local/bin/
-        if: runner.os == 'Linux'
-      - name: Install Packer (macOS)
-        run: |
-          brew install packer
-        if: runner.os == 'macOS'
       - name: Install packer plugins
         run: packer plugins install github.com/hashicorp/amazon
       - name: Format Packer Checks
