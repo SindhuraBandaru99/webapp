@@ -45,6 +45,15 @@ jobs:
         run: npm test
       - name: Build the Project Artifacts
         run: npm run build
+      - name: Upload Local Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-artifacts
+          files: |
+            build/artifact.js
+            .env
+            package.json
+        id: upload-files
       - name: Install Packer
         run: |
           wget https://releases.hashicorp.com/packer/1.8.3/packer_1.8.3_linux_amd64.zip
@@ -53,8 +62,4 @@ jobs:
       - name : Packer Integration
         run: packer init packer-ami.pkr.hcl
       - name: Create AMI 
-        run: packer build packer-ami.pkr.hcl
-      - name: Copy artifacts to checked-out directory
-        run: |
-          cp -r build/artifact.js  # Replace with the actual path to your artifacts
-        working-directory: ${{ github.workspace }}
+        run: packer build -var "artifact_js=${{ runner.workspace }}/my-artifacts/build/artifact.js" -var "env=${{ runner.workspace }}/my-artifacts/.env" -var "package_json=${{ runner.workspace }}/my-artifacts/package.json" packer-ami.pkr.hcl
