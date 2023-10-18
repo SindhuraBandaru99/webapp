@@ -1,6 +1,6 @@
 name: Integration Test
 on:
-  pull_request:
+  push:
     branches:
       - main
 jobs:
@@ -22,6 +22,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
+      - name: Configure AWS CLI Profile
+        run: |
+          aws configure --profile github set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure --profile github set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure --profile github set region us-east-1  # Replace with your desired AWS region
+        env:
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_PROFILE: github
       - name: Wait for MySQL to be ready
         run: |
           until nc -z -v -w30 localhost 3306
@@ -35,3 +43,18 @@ jobs:
         run: echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
       - name: Run Integration tests 
         run: npm test
+      - name: Build the Project Artifacts
+        run: npm run build
+      - name: Install Packer
+        run: |
+          wget https://releases.hashicorp.com/packer/1.8.3/packer_1.8.3_linux_amd64.zip
+          unzip packer_1.8.3_linux_amd64.zip
+          sudo mv packer /usr/local/bin/
+      - name : Packer Integration
+        run: packer init packer-ami.pkr.hcl
+      - name: Create AMI 
+        run: packer build packer-ami.pkr.hcl
+      - name: Copy artifacts to checked-out directory
+        run: |
+          cp -r ../dist/main.js .  # Replace with the actual path to your artifacts
+        working-directory: ${{ github.workspace }}

@@ -76,7 +76,7 @@ build {
       "sudo apt install -y nodejs npm",
       "node -v",
       "npm -v",
-      "mkdir -p webapp/dist"
+      "mkdir -p webapp/build"
     ]
   }
   provisioner "file" {
@@ -86,8 +86,8 @@ build {
   }
   provisioner "file" {
     //source      = "dist/main.js"  
-    source      = fileexists("dist/main.js") ? "dist/main.js" : "/" # Local path to the files to be copied
-    destination = "/home/admin/webapp/dist/main.js"                 # Destination path on the AMI
+    source      = fileexists("build/artifact.js") ? "build/artifact.js" : "/" # Local path to the files to be copied
+    destination = "/home/admin/webapp/build/artifact.js"                      # Destination path on the AMI
   }
   provisioner "file" {
     //source      = ".env" 
@@ -95,4 +95,5 @@ build {
     destination = "/home/admin/webapp/.env"         # Destination path on the AMI
   }
 }
+
 

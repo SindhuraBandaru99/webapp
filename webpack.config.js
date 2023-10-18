@@ -3,8 +3,8 @@ const nodeExternals = require('webpack-node-externals');
 module.exports = {
   entry: './app.js',
   output: {
-    filename: 'main.js',
-    path: path.resolve(__dirname, 'dist'),
+    filename: 'artifact.js',
+    path: path.resolve(__dirname, 'build'),
     clean: true
   },
   mode: 'development',

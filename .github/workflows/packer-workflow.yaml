@@ -21,8 +21,6 @@ jobs:
         if: runner.os == 'macOS'
       - name: Install packer plugins
         run: packer plugins install github.com/hashicorp/amazon
-      - name: Initialize Packer Project
-        run: packer init packer-ami.pkr.hcl
       - name: Format Packer Checks
         run: |
           set -e
