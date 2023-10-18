@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha tests/test.js",
-    "start": "node ./dist/main.js",
+    "start": "node ./build/artifact.js",
     "build": "webpack --config webpack.config.js --mode development"
   },
   "author": "",
