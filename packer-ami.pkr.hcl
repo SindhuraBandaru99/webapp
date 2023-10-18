@@ -27,11 +27,19 @@ variable "subnet_id" {
   default = "subnet-0b715170798cb04be"
 }
 
+variable "ami_users" {
+  type = list(string)
+  default = [
+    "902069452795"
+  ]
+}
+
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
   region          = "${var.aws_region}"
   profile         = "github"
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
+  ami_users       = "${var.ami_users}"
   ami_description = "AMI for CSYE 6225"
   ami_regions = [
     "us-east-1",
