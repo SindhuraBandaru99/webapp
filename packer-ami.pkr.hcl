@@ -34,6 +34,13 @@ variable "ami_users" {
   ]
 }
 
+variable "ami_regions" {
+  type = list(string)
+  default = [
+    "us-east-1"
+  ]
+}
+
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
   region          = "${var.aws_region}"
@@ -41,9 +48,7 @@ source "amazon-ebs" "my-ami" {
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_users       = "${var.ami_users}"
   ami_description = "AMI for CSYE 6225"
-  ami_regions = [
-    "us-east-1",
-  ]
+  ami_regions     = "${var.ami_regions}"
 
   aws_polling {
     delay_seconds = 120
@@ -116,5 +121,3 @@ build {
     ]
   }
 }
-
-
