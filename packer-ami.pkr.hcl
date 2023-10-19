@@ -27,6 +27,16 @@ variable "subnet_id" {
   default = "subnet-0b715170798cb04be"
 }
 
+variable "aws_profile" {
+  type    = string
+  default = "github"
+}
+
+variable "instance_type" {
+  type    = string
+  default = "t2.micro"
+}
+
 variable "ami_users" {
   type = list(string)
   default = [
@@ -44,7 +54,7 @@ variable "ami_regions" {
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
   region          = "${var.aws_region}"
-  profile         = "github"
+  profile         = "${var.aws_profile}"
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_users       = "${var.ami_users}"
   ami_description = "AMI for CSYE 6225"
@@ -55,7 +65,7 @@ source "amazon-ebs" "my-ami" {
     max_attempts  = 50
   }
 
-  instance_type = "t2.micro"
+  instance_type = "${var.instance_type}"
   source_ami    = "${var.source_ami}"
   ssh_username  = "${var.ssh_username}"
   subnet_id     = "${var.subnet_id}"
@@ -94,8 +104,8 @@ build {
   }
   provisioner "file" {
     //source      = "package.json"  
-    source      = fileexists("package.json") ? "package.json" : "/" # Local path to the files to be copied
-    destination = "/home/admin/webapp/package.json"                 # Destination path on the AMI
+    source      = "package.json"                    # Local path to the files to be copied
+    destination = "/home/admin/webapp/package.json" # Destination path on the AMI
   }
   provisioner "file" {
     //source      = "dist/main.js"  
