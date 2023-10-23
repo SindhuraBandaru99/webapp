@@ -6,7 +6,7 @@
 - Sequelize (3rd party package for ORM in Node)
 - bcryptjs
 - express
-- mocha
+- mocha test
 - sequelize
 - supertest
 ## Steps to deploy it locally.
