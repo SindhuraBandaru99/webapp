@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 
 
 async function authenticate(req, res, next) {
-  const authorizationHeader = req.get['Authorization'];
+  const authorizationHeader = req.get('Authorization');
   if(!authorizationHeader){
       res.status(401).send('Unauthorized');
       return;
