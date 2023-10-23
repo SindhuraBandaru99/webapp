@@ -88,14 +88,14 @@ build {
     ]
     inline = [
       "sudo apt update",
-      "sudo apt install -y mariadb-server",
-      "sudo systemctl start mariadb",
-      "sudo systemctl enable mariadb",
-      "sudo mysql -u root <<EOF",
-      "ALTER USER 'root'@'localhost' IDENTIFIED BY 'Vani@1972';",
-      "FLUSH PRIVILEGES;",
-      "EOF",
-      "sudo apt update",
+      // "sudo apt install -y mariadb-server",
+      // "sudo systemctl start mariadb",
+      // "sudo systemctl enable mariadb",
+      // "sudo mysql -u root <<EOF",
+      // "ALTER USER 'root'@'localhost' IDENTIFIED BY 'Vani@1972';",
+      // "FLUSH PRIVILEGES;",
+      // "EOF",
+      // "sudo apt update",
       "sudo apt install -y nodejs npm",
       "node -v",
       "npm -v",
@@ -112,11 +112,11 @@ build {
     source      = fileexists("build/artifact.js") ? "build/artifact.js" : "/" # Local path to the files to be copied
     destination = "/home/admin/webapp/build/artifact.js"                      # Destination path on the AMI
   }
-  provisioner "file" {
-    //source      = ".env" 
-    source      = fileexists(".env") ? ".env" : "/" # Local path to the files to be copied
-    destination = "/home/admin/webapp/.env"         # Destination path on the AMI
-  }
+  // provisioner "file" {
+  //   //source      = ".env" 
+  //   source      = fileexists(".env") ? ".env" : "/" # Local path to the files to be copied
+  //   destination = "/home/admin/webapp/.env"         # Destination path on the AMI
+  // }
   provisioner "file" {
     //source      = ".env" 
     source      = fileexists("users.csv") ? "users.csv" : "/" # Local path to the files to be copied
