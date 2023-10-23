@@ -20,7 +20,6 @@ async function authenticate(req, res, next) {
     
         if (!user) {
           return res.status(401).send('User Not Found');
-          //res.send('Unauthorized');
         }
     
         // Compare the provided password with the hashed password from the database
