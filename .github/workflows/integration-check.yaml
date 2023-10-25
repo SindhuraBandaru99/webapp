@@ -45,11 +45,6 @@ jobs:
         run: npm test
       - name: Build the Project Artifacts
         run: npm run build
-      - name: Upload Env File
-        uses: actions/upload-artifact@v2
-        with:
-          name: Env File
-          path: .env
       - name: Install Packer
         run: |
           wget https://releases.hashicorp.com/packer/1.8.3/packer_1.8.3_linux_amd64.zip
