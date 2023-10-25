@@ -1,10 +1,9 @@
 [Unit]
 Description= Starting the nodejs application
 ConditionPathExist=/opt/csye6225/webapp
-After=cloud-final.service
+After=cloud-final.target
 
 [Service]
-Environment=NODE_PORT=3000
 Type=simple
 User=csye6225
 Group=csye6225
