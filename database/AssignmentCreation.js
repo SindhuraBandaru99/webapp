@@ -39,7 +39,9 @@ router.post('/', authenticate, async (req, res) => {
         deadline,
         user_id : userid,
     }).then((assignment) => {
-        return res.status(201).json(assignment);
+      const output = { ...assignment.toJSON() };
+      delete output.user_id;
+        return res.status(201).json(output);
       })
       .catch((error) => {
         return res.status(400).json({ message: "Validation error for points and attempts" });
@@ -141,8 +143,9 @@ router.post('/', authenticate, async (req, res) => {
                     if (!assignment) {
                       return res.status(404).json({ error: 'Assignment not found' });
                     }
-            
-                return res.status(200).json(assignment);
+                const output = { ...assignment.toJSON() };
+                delete output.user_id;
+                return res.status(200).json(output);
               } catch (error) {
                 console.error('Error retrieving assignments:', error);
                 return res.status(500).json({ error: 'Internal Server Error' });
@@ -152,7 +155,11 @@ router.post('/', authenticate, async (req, res) => {
         router.get('/', authenticate, async (req, res) => {
             try {
                 // Retrieve all assignments from the database
-                const assignments = await Assignment.findAll();
+                const assignments = await Assignment.findAll({
+                  attributes:{
+                    exclude: ['user_id']
+                  }
+                });
                 return res.status(200).json(assignments);
               } catch (error) {
                 console.error('Error retrieving assignments:', error);

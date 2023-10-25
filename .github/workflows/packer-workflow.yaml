@@ -20,5 +20,9 @@ jobs:
         run: |
           set -e
           packer fmt -check .
+          echo "Packer Formatting Completed"
+      - name: Validate Packer Checks
+        run: |
+          set -e
           packer validate .
-          echo "Validation and Packer Formatting Completed"
+          echo "Packer Validation Completed"
