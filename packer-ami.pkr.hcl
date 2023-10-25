@@ -127,13 +127,13 @@ build {
 
   provisioner "file" {
     source      = fileexists("web-app.service") ? "web-app.service" : "/" # Local path to the files to be copied
-    destination = "/home/admin/web-app.service"                     # Destination path on the AMI
+    destination = "/home/admin/web-app.service"                           # Destination path on the AMI
   }
 
   provisioner "shell" {
     inline = [
       "sudo mv users.csv /opt/",
-      "sudo mv web-app.service /etc/systemd/system"
+      "sudo mv web-app.service /etc/systemd/system",
       "cd webapp",
       "npm install",
       "sudo mv webapp /opt/csye6225/",
