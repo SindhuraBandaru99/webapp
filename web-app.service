@@ -1,0 +1,15 @@
+[Unit]
+Description= Starting the nodejs application
+After=cloud-final.service
+
+[Service]
+Environment=NODE_PORT=3000
+Type=simple
+User=admin
+WorkingDirectory=/home/admin/webapp/
+ExecStart=/usr/bin/npm start
+Restart=on-failure
+
+
+[Install]
+WantedBy=cloud-init.target

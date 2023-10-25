@@ -87,6 +87,8 @@ build {
       "CHECKPOINT_DISABLE=1"
     ]
     inline = [
+      "sudo groupadd csye6225",
+      "sudo useradd -s /bin/false -g csye6225 -d /opt/csye6225 -m csye6225",
       "sudo apt update",
       // "sudo apt install -y mariadb-server",
       // "sudo systemctl start mariadb",
@@ -112,22 +114,33 @@ build {
     source      = fileexists("build/artifact.js") ? "build/artifact.js" : "/" # Local path to the files to be copied
     destination = "/home/admin/webapp/build/artifact.js"                      # Destination path on the AMI
   }
-  // provisioner "file" {
-  //   //source      = ".env" 
-  //   source      = fileexists(".env") ? ".env" : "/" # Local path to the files to be copied
-  //   destination = "/home/admin/webapp/.env"         # Destination path on the AMI
-  // }
+  provisioner "file" {
+    //source      = ".env" 
+    source      = fileexists(".env") ? ".env" : "/" # Local path to the files to be copied
+    destination = "/home/admin/webapp/.env"         # Destination path on the AMI
+  }
   provisioner "file" {
     //source      = ".env" 
     source      = fileexists("users.csv") ? "users.csv" : "/" # Local path to the files to be copied
     destination = "/home/admin/users.csv"                     # Destination path on the AMI
   }
 
+  provisioner "file" {
+    source      = fileexists("web-app.service") ? "web-app.service" : "/" # Local path to the files to be copied
+    destination = "/home/admin/web-app.service"                     # Destination path on the AMI
+  }
+
   provisioner "shell" {
     inline = [
       "sudo mv users.csv /opt/",
+      "sudo mv web-app.service /etc/systemd/system"
       "cd webapp",
-      "npm install"
+      "npm install",
+      "sudo mv webapp /opt/csye6225/",
+      "sudo chown -R csye6225:csye6225 /opt/",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable web-app",
+      "sudo systemctl start web-app"
     ]
   }
 }
