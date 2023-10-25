@@ -136,6 +136,7 @@ build {
       "sudo mv web-app.service /etc/systemd/system",
       "cd webapp",
       "npm install",
+      "cd .."
       "sudo mv webapp /opt/csye6225/",
       "sudo chown -R csye6225:csye6225 /opt/",
       "sudo systemctl daemon-reload",
