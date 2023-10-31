@@ -25,7 +25,7 @@
 -  we can run the server by  `npm start`
 
 ## Application Testing
-run `npm test` : this runs test on integration-test.js
+run `npm test` : this will run test on integration-test.js
 
 ## Packer
 
