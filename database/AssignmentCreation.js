@@ -4,10 +4,10 @@ const {Assignment} = require('../models/index');
 const { User } = require('../models/index');
 const {authenticate,getBasicAuthCredentials} = require('../auth')
 const logger = require('../logger');
-
- 
+const client = require('../metrics');
 
 router.post('/', authenticate, async (req, res) => {
+    client.increment('post');
     const credentials = getBasicAuthCredentials(req)
     const email = credentials.name
     const user = await User.findOne({ where: { email } });
@@ -61,6 +61,7 @@ router.post('/', authenticate, async (req, res) => {
   });
 
   router.put('/:assign_id', authenticate, async (req, res) => {
+    client.increment('put');
     const credentials = getBasicAuthCredentials(req)
     const email = credentials.name
     const user = await User.findOne({ where: { email } });
@@ -119,6 +120,7 @@ router.post('/', authenticate, async (req, res) => {
     });
 
     router.delete('/:assign_id', authenticate, async (req, res) => {
+        client.increment('delete');
         const credentials = getBasicAuthCredentials(req)
         const email = credentials.name
         const user = await User.findOne({ where: { email } });
@@ -153,6 +155,7 @@ router.post('/', authenticate, async (req, res) => {
         });
 
         router.get('/:assign_id', authenticate, async (req, res) => {
+          client.increment('getByID');
             try {
                 // Retrieve all assignments from the database
                 const assignment_id = req.params.assign_id
@@ -176,6 +179,7 @@ router.post('/', authenticate, async (req, res) => {
         });
 
         router.get('/', authenticate, async (req, res) => {
+          client.increment('getAll');
             try {
                 // Retrieve all assignments from the database
                 const assignments = await Assignment.findAll({
@@ -193,6 +197,7 @@ router.post('/', authenticate, async (req, res) => {
         });
 
         router.patch('/*', authenticate, async (req, res) => {
+          client.increment('Patch');
           logger.info('Method Not Allowed');
           return res.status(405).json({ error: 'Method Not Allowed' });
         });

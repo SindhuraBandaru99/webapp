@@ -30,6 +30,7 @@ app.use(express.json())
 
 app.get('/healthz', async (req, res) => {
 
+  client.increment('healthz');
   try {
 
       res.set('Cache-Control', 'no-cache');
@@ -54,6 +55,7 @@ app.get('/healthz', async (req, res) => {
 });
 
 app.all('/healthz', (req, res) => {
+  client.increment('healthz');
   if (req.method !== 'GET') {
     res.status(405).send();
     console.log("Method Not Allowed");

@@ -139,6 +139,7 @@ build {
   }
 
   provisioner "file" {
+    source      = "cloudwatch-config.json"
     destination = "/home/admin/webapp/cloudwatch-config.json" # Destination path on the AMI
   }
 

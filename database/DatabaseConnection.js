@@ -2,9 +2,11 @@ const express = require('express');
 const healthRouter = express.Router();
 const sequelize = require('../models/index')
 const logger = require('../logger');
+const client = require('../metrics');
 
 
   healthRouter.get('/', async(req, res) => {
+    client.increment('healthz');
     if (Object.keys(req.body).length > 0) {
       logger.error('Bad Request: Request Body is present');
         return res.status(400).send();
@@ -28,6 +30,7 @@ const logger = require('../logger');
   });
 
   healthRouter.all('/', async(req, res) => {
+    client.increment('healthz');
     logger.info('Method Not Allowed');
     return res.status(405).send();
   });
