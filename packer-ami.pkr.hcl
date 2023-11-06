@@ -139,7 +139,7 @@ build {
   }
 
   provisioner "file" {
-    destination = "/home/admin/webapp/cloudwatch-config.json"                                  # Destination path on the AMI
+    destination = "/home/admin/webapp/cloudwatch-config.json" # Destination path on the AMI
   }
 
   provisioner "shell" {
@@ -157,7 +157,7 @@ build {
       "sudo systemctl daemon-reload",
       "sudo systemctl enable amazon-cloudwatch-agent",
       "sudo systemctl start amazon-cloudwatch-agent",
-     
+
     ]
   }
 }
