@@ -139,13 +139,7 @@ build {
   }
 
   provisioner "file" {
-    source      = fileexists("csye6225.log") ? "csye6225.log" : "/" # Local path to the files to be copied
-    destination = "/home/admin/csye6225.log"                        # Destination path on the AMI
-  }
-
-  provisioner "file" {
-    source      = fileexists("cloudwatch-config.json") ? "cloudwatch-config.json" : "/" # Local path to the files to be copied
-    destination = "/home/admin/cloudwatch-config.json"                                  # Destination path on the AMI
+    destination = "/home/admin/webapp/cloudwatch-config.json"                                  # Destination path on the AMI
   }
 
   provisioner "shell" {
@@ -160,8 +154,10 @@ build {
       "sudo systemctl daemon-reload",
       "sudo systemctl enable web-app",
       "sudo systemctl start web-app",
-      "sudo systemctl start amazon-cloudwatch-agent",
+      "sudo systemctl daemon-reload",
       "sudo systemctl enable amazon-cloudwatch-agent",
+      "sudo systemctl start amazon-cloudwatch-agent",
+     
     ]
   }
 }
