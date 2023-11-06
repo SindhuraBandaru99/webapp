@@ -8,6 +8,8 @@ const router = require('./database/AssignmentCreation');
 const healthRouter = require('./database/DatabaseConnection');
 require('dotenv').config();
 const logger = require('./logger');
+const client = require('./metrics');
+
 
 (async () => {
   try {
