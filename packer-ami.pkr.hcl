@@ -96,7 +96,7 @@ build {
       "sudo groupadd csye6225",
       "sudo useradd -s /bin/false -g csye6225 -d /opt/csye6225 -m csye6225",
       "sudo apt update",
-      "sudo wget cw_agent_download -O /tmp/amazon-cloudwatch-agent.deb",
+      "sudo wget https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb -O /tmp/amazon-cloudwatch-agent.deb",
       "sudo dpkg -i /tmp/amazon-cloudwatch-agent.deb",
       // "sudo apt install -y mariadb-server",
       // "sudo systemctl start mariadb",
@@ -139,6 +139,11 @@ build {
   }
 
   provisioner "file" {
+    source      = fileexists("csye6225.log") ? "csye6225.log" : "/" # Local path to the files to be copied
+    destination = "/home/admin/csye6225.log"                        # Destination path on the AMI
+  }
+
+  provisioner "file" {
     source      = fileexists("cloudwatch-config.json") ? "cloudwatch-config.json" : "/" # Local path to the files to be copied
     destination = "/home/admin/cloudwatch-config.json"                                  # Destination path on the AMI
   }
@@ -155,8 +160,8 @@ build {
       "sudo systemctl daemon-reload",
       "sudo systemctl enable web-app",
       "sudo systemctl start web-app",
-      // "sudo systemctl start amazon-cloudwatch-agent",
-      // "sudo systemctl enable amazon-cloudwatch-agent",
+      "sudo systemctl start amazon-cloudwatch-agent",
+      "sudo systemctl enable amazon-cloudwatch-agent",
     ]
   }
 }

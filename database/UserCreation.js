@@ -3,6 +3,7 @@ const {User} = require('../models/index');
 const csv = require('csv-parser');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
+const logger = require('../logger');
 
 
 const csvFilePath = process.env.CSV_FILE;
@@ -37,7 +38,9 @@ const checkEmail = async(emailId) => {
               password: data.password,
             });
             console.log('Data inserted successfully');
+            logger.info('Data inserted successfully');
           } catch (error) {
+            logger.error('Error inserting data:', error);
             console.error('Error inserting data:', error);
           }
         }
