@@ -7,7 +7,7 @@ const userCreation = require('./database/UserCreation');
 const router = require('./database/AssignmentCreation');
 const healthRouter = require('./database/DatabaseConnection');
 require('dotenv').config();
-
+const logger = require('./logger');
 
 (async () => {
   try {
@@ -17,8 +17,11 @@ require('dotenv').config();
 
     app.listen(process.env.PORT, () => {
       console.log("Server running on port", process.env.PORT);
+      logger.info('Server running on port', process.env.PORT);
+      
     });
   } catch (error) {
+    logger.info('Error',error);
     console.error("Error:", error);
   }
 })();
@@ -31,16 +34,20 @@ app.get('/healthz', async (req, res) => {
 
       res.set('Cache-Control', 'no-cache');
       if(Object.keys(req.body).length > 0) {
+        logger.error('Bad Request: Request Body is present');
           res.status(400).send();
       }
       if(Object.keys(req.query).length > 0) {
+        logger.error('Bad Request: Query Parameters are Present');
           res.status(400).send()
       }
       else {
           await sequelize.authenticate()
+          logger.info('Database Connection Successfull');
           res.status(200).send()
       }
     } catch (error) {
+      logger.error('Database Service Unavailable');
           res.status(503).send()
     }
 
@@ -53,6 +60,8 @@ app.all('/healthz', (req, res) => {
   }
 })
 
+
+//app.use('/healthz',healthRouter);
 
   User.hasMany(Assignment, {
     foreignKey: 'user_id',
