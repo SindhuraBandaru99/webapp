@@ -23,7 +23,6 @@ const client = require('./metrics');
       
     });
   } catch (error) {
-    logger.info('Error',error);
     console.error("Error:", error);
   }
 })();
