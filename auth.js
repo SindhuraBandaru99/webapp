@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 async function authenticate(req, res, next) {
   const authorizationHeader = req.get('Authorization');
   if(!authorizationHeader){
+      logger.error('Unauthorized');
       res.status(401).send('Unauthorized');
       return;
   }
@@ -19,6 +20,7 @@ async function authenticate(req, res, next) {
         const user = await User.findOne({ where: { email } });
     
         if (!user) {
+          logger.error('User Not Found');
           return res.status(401).send('User Not Found');
         }
     
@@ -27,16 +29,19 @@ async function authenticate(req, res, next) {
     
         if (passwordMatch) {
           // Passwords match, grant access to the secure route
+          logger.info('Password Match Successfull');
           next()
           //return res.status(201).send('Authorized User');
          // res.send('You have access to this secured route.');
         } else {
           // Passwords do not match, deny access
+          logger.error('Unauthorized');
           res.status(401).send('Unauthorized');
           //res.send('Unauthorized');
         }
       } catch (error) {
             console.error(error);
+            logger.error('Internal Server Error');
             res.status(500).send('Internal Server Error');
       }
     
