@@ -27,5 +27,3 @@
 ## Application Testing
 run `npm test` : this will run test on integration-test.js
 
-## Packer
-
