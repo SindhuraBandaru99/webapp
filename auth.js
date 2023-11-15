@@ -9,7 +9,7 @@ async function authenticate(req, res, next) {
   }
   else if (req.method === 'GET') {
     if (req.originalUrl.startsWith('/v1/assignments/')) {
-      const assignmentId = req.params.assignmentId;
+      const assignmentId = req.params.assign_id;
       if (assignmentId) {
         client.increment('getByID');
       } else {
