@@ -7,13 +7,13 @@ const logger = require('../logger');
 const client = require('../metrics');
 
 router.post('/', authenticate, async (req, res) => {
-    client.increment('post');
+    // client.increment('post');
     const credentials = getBasicAuthCredentials(req)
     const email = credentials.name
     const user = await User.findOne({ where: { email } });
     const userid = user.user_id
     if(credentials == null){
-      logger.error('Authorization Headers are empty');
+      logger.info('Authorization Headers are empty');
       return res.status(401).json({ message: "Authorization Headers are empty" });
     }
     try {
@@ -26,15 +26,15 @@ router.post('/', authenticate, async (req, res) => {
         assignment_updated
       } = req.body;
       if (!name || !points || !num_of_attempts || !deadline) {
-        logger.error('Invalid Request Body');
+        logger.info('Invalid Request Body');
         return res.status(400).json({ message: 'Invalid request body' });
       }
       if(!Number.isInteger(num_of_attempts) || !Number.isInteger(points) ){
-        logger.error('Type should be integer for Number of attempts and points');
+        logger.info('Type should be integer for Number of attempts and points');
         return res.status(400).json({message: 'Type should be integer for Number of attempts and points'})
     }
       if (assignment_created || assignment_updated) {
-        logger.error('You donot have permissions to provide assignment created or updated');
+        logger.info('You donot have permissions to provide assignment created or updated');
         return res.status(403).json({ error: 'You donot have permissions to provide assignment created or updated' });
       }
       const assignment = await Assignment.create({
@@ -61,7 +61,7 @@ router.post('/', authenticate, async (req, res) => {
   });
 
   router.put('/:assign_id', authenticate, async (req, res) => {
-    client.increment('put');
+    // client.increment('put');
     const credentials = getBasicAuthCredentials(req)
     const email = credentials.name
     const user = await User.findOne({ where: { email } });
@@ -78,24 +78,24 @@ router.post('/', authenticate, async (req, res) => {
 
         
         if (!assignment) {
-          logger.error('Bad Request : Assignment not found');
+          logger.info('Bad Request : Assignment not found');
           return res.status(400).json({ error: 'Bad Request : Assignment not found' });
         }
         else if (assignment.user_id !== userid) {
-            logger.error('Unauthorized - You do not have permission to update this assignment');
+            logger.info('Unauthorized - You do not have permission to update this assignment');
             return res.status(403).json({ error: 'Unauthorized - You do not have permission to update this assignment' });
         }
         // Update assignment attributes
         if (!name || !points || !num_of_attempts || !deadline) {
-          logger.error('Invalid request body');
+          logger.info('Invalid request body');
           return res.status(400).json({ message: 'Invalid request body' });
         }
         if(!Number.isInteger(num_of_attempts) ||!Number.isInteger(points) ){
-          logger.error('Type should be integer for Number of attempts and points');
+          logger.info('Type should be integer for Number of attempts and points');
         return res.status(400).json({message: 'Type should be integer for Number of attempts and points'})
     }
         if (assignment_created || assignment_updated) {
-          logger.error('You donot have permissions to update assignment created or updated');
+          logger.info('You donot have permissions to update assignment created or updated');
           return res.status(403).json({ error: 'You donot have permissions to update assignment created or updated' });
         }
 
@@ -105,7 +105,7 @@ router.post('/', authenticate, async (req, res) => {
           assignment.deadline = deadline;
 
         const updateAssignment = await assignment.save().then((assignment) => {
-          logger.error('Assignment Updated Successfully');
+          logger.info('Assignment Updated Successfully');
           return res.status(204).json(assignment);
         })
         .catch((error) => {
@@ -120,7 +120,7 @@ router.post('/', authenticate, async (req, res) => {
     });
 
     router.delete('/:assign_id', authenticate, async (req, res) => {
-        client.increment('delete');
+        // client.increment('delete');
         const credentials = getBasicAuthCredentials(req)
         const email = credentials.name
         const user = await User.findOne({ where: { email } });
@@ -135,11 +135,11 @@ router.post('/', authenticate, async (req, res) => {
             });
         
             if (!assignment) {
-              logger.error('Bad Request: Assignment not found');
+              logger.info('Bad Request: Assignment not found');
               return res.status(404).json({ error: 'Bad Request: Assignment not found' });
             }
             else if (assignment.user_id !== userid) {
-              logger.error('Unauthorized - You do not have permission to Delete this assignment');
+              logger.info('Unauthorized - You do not have permission to Delete this assignment');
                 return res.status(403).json({ error: 'Unauthorized - You do not have permission to Delete this assignment' });
             }
         
@@ -155,7 +155,7 @@ router.post('/', authenticate, async (req, res) => {
         });
 
         router.get('/:assign_id', authenticate, async (req, res) => {
-          client.increment('getByID');
+          // client.increment('getByID');
             try {
                 // Retrieve all assignments from the database
                 const assignment_id = req.params.assign_id
@@ -164,7 +164,7 @@ router.post('/', authenticate, async (req, res) => {
                       assign_id : assignment_id,
                     }})
                     if (!assignment) {
-                      logger.error('Assignment not found');
+                      logger.info('Assignment not found');
                       return res.status(404).json({ error: 'Assignment not found' });
                     }
                 const output = { ...assignment.toJSON() };
@@ -179,7 +179,7 @@ router.post('/', authenticate, async (req, res) => {
         });
 
         router.get('/', authenticate, async (req, res) => {
-          client.increment('getAll');
+          // client.increment('getAll');
             try {
                 // Retrieve all assignments from the database
                 const assignments = await Assignment.findAll({
@@ -197,7 +197,7 @@ router.post('/', authenticate, async (req, res) => {
         });
 
         router.patch('/*', authenticate, async (req, res) => {
-          client.increment('Patch');
+          // client.increment('Patch');
           logger.info('Method Not Allowed');
           return res.status(405).json({ error: 'Method Not Allowed' });
         });
