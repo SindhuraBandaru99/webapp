@@ -1,9 +1,31 @@
 const basicAuth = require('basic-auth');
 const {User} = require('./models/index');
 const bcrypt = require('bcrypt');
-
+const client = require('./metrics')
 
 async function authenticate(req, res, next) {
+  if(req.method == 'POST'){
+    client.increment('post');
+  }
+  else if (req.method === 'GET') {
+    if (req.originalUrl.startsWith('/v1/assignments/')) {
+      const assignmentId = req.params.assignmentId;
+      if (assignmentId) {
+        client.increment('getByID');
+      } else {
+        client.increment('getAll');
+      }
+    }
+  }
+  else if(req.method == 'PUT'){
+    client.increment('put');
+  }
+  else if(req.method == 'DELETE'){
+    client.increment('delete');
+  }
+  else if(req.method == 'PATCH') {
+    client.increment('Patch');
+  }
   const authorizationHeader = req.get('Authorization');
   if(!authorizationHeader){
       res.status(401).send('Unauthorized');
