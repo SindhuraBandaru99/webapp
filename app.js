@@ -1,7 +1,7 @@
 const express =  require('express');
 const app = express();
 const mysql = require('mysql2/promise')
-const{sequelize,createDatabase,syncDatabase,User,Assignment} = require("./models/index")
+const{sequelize,createDatabase,syncDatabase,User,Assignment,Submission} = require("./models/index")
 const userCreation = require('./database/UserCreation');
 
 const router = require('./database/AssignmentCreation');
@@ -73,6 +73,16 @@ app.all('/healthz', (req, res) => {
   Assignment.belongsTo(User, {
     foreignKey: 'user_id',
   });
+
+  Assignment.hasMany(Submission, {
+    foreignKey: 'assign_id',
+  });
+  
+  Submission.belongsTo(Assignment, {
+    foreignKey: 'assign_id',
+  });
+
+
   
 app.use('/v1/assignments',router);
 

@@ -2,6 +2,7 @@ const Sequelize  = require('sequelize');
 const dbconfig = require('../config/db-config');
 const UserModel = require("./user");
 const AssignmentModel = require("./assignments");
+const SubmissionModel = require("./submission");
 //const Sequelize = require('sequelize');
 const mysql = require('mysql2/promise')
 require('dotenv').config();
@@ -20,6 +21,7 @@ const sequelize = new Sequelize(database, user, password, {
 
 const User = UserModel(sequelize);
 const Assignment = AssignmentModel(sequelize);
+const Submission = SubmissionModel(sequelize);
 
 const syncDatabase = async () => {
     await sequelize.sync({ alter: true });
@@ -41,4 +43,5 @@ module.exports = {
     syncDatabase,
     User,
     Assignment,
+    Submission,
   };
