@@ -259,11 +259,14 @@ router.post('/', authenticate, async (req, res) => {
               submission_url,
               assign_id : assignment_id,
           }).then((submission) => {
+            const submissionResponse = {...submission.toJSON()}
             logger.info('Submission Accepted');
+            const id = submissionResponse.id
             const params = {
               Message: JSON.stringify({
                 submission_url,
                 emailID,
+                id,
               }),
               TopicArn: process.env.TOPIC_ARN,
             };
