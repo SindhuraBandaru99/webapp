@@ -240,7 +240,7 @@ router.post('/', authenticate, async (req, res) => {
             }
             if(retries_remaining == 0){
               logger.info('Number of attempts Exceeded');
-              return res.status(400).json({ error: 'Bad Request: Number of attempts Exceeded' });
+              return res.status(403).json({ error: 'Bad Request: Number of attempts Exceeded' });
             }
             if (!assignment) {
               logger.info('Bad Request: Assignment not found');
@@ -249,7 +249,7 @@ router.post('/', authenticate, async (req, res) => {
             const currentDate = new Date();
             const formattedDateTime = currentDate.toISOString();
             if (formattedDateTime > assignment.deadline) {
-              return res.status(400).json({ error: 'Submission deadline has passed.' });
+              return res.status(403).json({ error: 'Submission deadline has passed.' });
             }
             if (submission_date || submission_updated) {
               logger.info('You donot have permissions to provide submission created or updated');
@@ -284,7 +284,7 @@ router.post('/', authenticate, async (req, res) => {
             }catch(error){
               console.error(error);
             }
-            return res.status(201).end();
+            return res.status(201).send(submissionResponse);;
             })
           } catch (error) {
             console.error(error);
