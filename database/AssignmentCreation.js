@@ -7,11 +7,9 @@ const logger = require('../logger');
 const client = require('../metrics');
 const AWS = require('aws-sdk');
 
-// AWS.config.update({
-//   accessKeyId: 'AKIAYAOPQVYPVHVCVJFS',
-//   secretAccessKey: '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',
-//   region: 'us-east-1',
-// });
+AWS.config.update({
+  region: process.env.SNS_REGION,
+});
 const sns = new AWS.SNS();
 
 
