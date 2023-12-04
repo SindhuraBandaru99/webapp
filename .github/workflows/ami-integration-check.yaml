@@ -43,17 +43,7 @@ jobs:
           echo "::set-output name=latest_ami_id::$latest_ami_id"
           echo "::set-output name=latest_ami_name::$latest_ami_name"
 
-      
-
-      # - name: Update Launch Template
-      #   run: |
-      #     aws ec2 create-launch-template-version \
-      #       --launch-template-name asg_launch_config \
-      #       --version-description "Updated version with the latest AMI" \
-      #       --source-version 1\
-      #       --block-device-mappings "[{\"DeviceName\":\"/dev/sda1\",\"Ebs\":{\"VolumeSize\":your-volume-size}}]" \
-      #       --image-id ${{ needs.get-ami-id-and-name.outputs.latest_ami_id }}
-
+    
       - name: Create Launch Template
         run: |
           aws ec2 create-launch-template \
