@@ -24,13 +24,13 @@ jobs:
           node-version: 20
       - name: Configure AWS CLI Profile
         run: |
-          aws configure --profile github_demo set aws_access_key_id ${{ secrets.DEMO_ACCESS_KEY_ID }}
-          aws configure --profile github_demo set aws_secret_access_key ${{ secrets.DEMO_SECRET_ACCESS_KEY }}
-          aws configure --profile github_demo set region us-east-1  # Replace with your desired AWS region
+          aws configure --profile github set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure --profile github set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure --profile github set region us-east-1  # Replace with your desired AWS region
         env:
           AWS_DEFAULT_REGION: us-east-1
-          AWS_PROFILE: github_demo
-          
+          AWS_PROFILE: github
+
       - name: Wait for MySQL to be ready
         run: |
           until nc -z -v -w30 localhost 3306
@@ -56,6 +56,14 @@ jobs:
         run: packer init .
       - name: Create AMI 
         run: packer build .
+      - name: Configure AWS CLI Profile
+        run: |
+          aws configure --profile github_demo set aws_access_key_id ${{ secrets.DEMO_ACCESS_KEY_ID }}
+          aws configure --profile github_demo set aws_secret_access_key ${{ secrets.DEMO_SECRET_ACCESS_KEY }}
+          aws configure --profile github_demo set region us-west-1  # Replace with your desired AWS region
+        env:
+          AWS_DEFAULT_REGION: us-west-1
+          AWS_PROFILE: github_demo
       - name: Get the latest Debian AMI ID and Name
         id: get-ami-id-and-name
         run: |
