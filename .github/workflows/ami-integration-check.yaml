@@ -71,11 +71,10 @@ jobs:
             --owners demo \
             --filters "Name=architecture,Values=x86_64" "Name=state,Values=available" "Name=tag:Name,Values=csye6225_*" \
             --query "Images | sort_by(@, &CreationDate) | [-1].{ID:ImageId,Name:Tags[?Key=='Name'].Value | [0]}" --output json)
-          latest_ami_id=$(echo $latest_ami | grep -oP '"ImageId": "\K[^"]+')
-          latest_ami_name=$(echo $latest_ami | grep -oP '"Value": "csye6225_\K[^"]+')
+             
+            latest_ami_id=$(echo $latest_ami | awk -F'"' '/ID/{print $4}')
 
           echo "::set-output name=latest_ami_id::$latest_ami_id"
-          echo "::set-output name=latest_ami_name::$latest_ami_name"
 
     
       - name: Create Launch Template
