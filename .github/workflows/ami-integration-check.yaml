@@ -69,20 +69,19 @@ jobs:
         run: |
           latest_ami=$(aws ec2 describe-images \
             --filters "Name=name,Values=csye6225_*" \
-            --query 'Images | sort_by(@, &CreationDate) | [-1].ImageId' --output text)
+            --query 'Images | sort_by(@, &CreationDate) | [-1].ImageId' --output text) || echo "Error getting AMI ID"
 
           aws ec2 create-launch-template-version \
             --launch-template-name asg_launch_config \
             --version-description "New version with updated AMI" \
             --block-device-mappings "[{\"DeviceName\":\"/dev/sda1\",\"Ebs\":{\"VolumeSize\":your-volume-size}}]" \
-            --image-id $latest_ami
+            --image-id $latest_ami || echo "Error creating launch template version"
 
           new_version=$(aws ec2 describe-launch-templates \
             --launch-template-names asg_launch_config \
-            --query 'LaunchTemplates[0].LatestVersionNumber' --output text)
+            --query 'LaunchTemplates[0].LatestVersionNumber' --output text) || echo "Error getting new launch template version"
 
 
           aws autoscaling update-auto-scaling-group \
             --auto-scaling-group-name Ec2-Auto-Scaling-Group \
-            --launch-template "LaunchTemplateName=asg_launch_config,Version=$new_version"
-      
+            --launch-template "LaunchTemplateName=asg_launch_config,Version=$new_version" || echo "Error updating Auto Scaling Group"
