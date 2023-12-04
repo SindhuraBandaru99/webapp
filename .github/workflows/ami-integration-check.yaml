@@ -30,7 +30,7 @@ jobs:
         env:
           AWS_DEFAULT_REGION: us-east-1
           AWS_PROFILE: github_demo
-
+          
       - name: Wait for MySQL to be ready
         run: |
           until nc -z -v -w30 localhost 3306
