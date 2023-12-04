@@ -21,7 +21,7 @@
 -   `DB_NAME = cloudAssignment`
 -   `DB_DIALECT = mysql`
 -   `APP_PORT = 3000`
--    Before running a application make sure there are node module
+-    Before running a application make sure there are node modules
 -  we can run the server by  `npm start`
 
 ## Application Testing
