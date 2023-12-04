@@ -56,14 +56,13 @@ jobs:
         run: packer init .
       - name: Create AMI 
         run: packer build .
-      - name: Configure AWS CLI Profile
-        run: |
-          aws configure --profile github_demo set aws_access_key_id ${{ secrets.DEMO_ACCESS_KEY_ID }}
-          aws configure --profile github_demo set aws_secret_access_key ${{ secrets.DEMO_SECRET_ACCESS_KEY }}
-          aws configure --profile github_demo set region us-west-1  # Replace with your desired AWS region
-        env:
-          AWS_DEFAULT_REGION: us-west-1
-          AWS_PROFILE: github_demo
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.DEMO_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEMO_SECRET_ACCESS_KEY }}
+          aws-region: us-west-1
+          aws-profile: demo
       - name: Get the latest Debian AMI ID and Name
         id: get-ami-id-and-name
         run: |
@@ -71,19 +70,3 @@ jobs:
             --filters "Name=name,Values=csye6225_*" \
             --query 'Images | sort_by(@, &CreationDate) | [-1].ImageId' --output text) 
           echo $latest_ami
-
-          aws ec2 create-launch-template-version \
-            --launch-template-name asg_launch_config \
-            --version-description "New version with updated AMI" \
-            --block-device-mappings "[{\"DeviceName\":\"/dev/sda1\",\"Ebs\":{\"VolumeSize\":your-volume-size}}]" \
-            --image-id $latest_ami || echo "Error creating launch template version"
-
-          new_version=$(aws ec2 describe-launch-templates \
-            --launch-template-names asg_launch_config \
-            --query 'LaunchTemplates[0].LatestVersionNumber' --output text) || echo "Error getting new launch template version"
-
-
-          aws autoscaling update-auto-scaling-group \
-            --auto-scaling-group-name Ec2-Auto-Scaling-Group \
-            --launch-template "LaunchTemplateName=asg_launch_config,Version=$new_version" || echo "Error updating Auto Scaling Group"
-      
