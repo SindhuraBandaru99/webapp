@@ -30,6 +30,32 @@ jobs:
         env:
           AWS_DEFAULT_REGION: us-east-1
           AWS_PROFILE: github_demo
+
+      - name: Wait for MySQL to be ready
+        run: |
+          until nc -z -v -w30 localhost 3306
+          do
+            echo "Waiting for MySQL to be ready..."
+            sleep 5
+          done
+      - name: Install project dependencies
+        run: npm install
+      - name: Set up .env
+        run: echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
+      - name: Run Integration tests 
+        run: npm test
+      - name: Build the Project Artifacts
+        run: npm run build
+      - name: Install Packer
+        run: |
+          wget https://releases.hashicorp.com/packer/1.8.3/packer_1.8.3_linux_amd64.zip
+          unzip packer_1.8.3_linux_amd64.zip
+          sudo mv packer /usr/local/bin/
+      
+      - name : Packer Integration
+        run: packer init .
+      - name: Create AMI 
+        run: packer build .
       - name: Get the latest Debian AMI ID and Name
         id: get-ami-id-and-name
         run: |
@@ -58,29 +84,4 @@ jobs:
           aws autoscaling update-auto-scaling-group \
             --auto-scaling-group-name Ec2-Auto-Scaling-Group \
             --launch-template "LaunchTemplateName=new_asg_launch_config,Version=2"
-
-      - name: Wait for MySQL to be ready
-        run: |
-          until nc -z -v -w30 localhost 3306
-          do
-            echo "Waiting for MySQL to be ready..."
-            sleep 5
-          done
-      - name: Install project dependencies
-        run: npm install
-      - name: Set up .env
-        run: echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
-      - name: Run Integration tests 
-        run: npm test
-      - name: Build the Project Artifacts
-        run: npm run build
-      - name: Install Packer
-        run: |
-          wget https://releases.hashicorp.com/packer/1.8.3/packer_1.8.3_linux_amd64.zip
-          unzip packer_1.8.3_linux_amd64.zip
-          sudo mv packer /usr/local/bin/
       
-      - name : Packer Integration
-        run: packer init .
-      - name: Create AMI 
-        run: packer build .
