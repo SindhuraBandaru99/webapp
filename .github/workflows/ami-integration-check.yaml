@@ -70,11 +70,28 @@ jobs:
             --filters "Name=name,Values=csye6225_*" \
             --query 'Images | sort_by(@, &CreationDate) | [-1].ImageId' --output text) 
           echo $latest_ami
-          aws ec2 create-launch-template-version \
-            --launch-template-name asg_launch_config \
-            --version-description "New version with updated AMI" \
-            --source-version 1 \
-            --image-id $latest_ami || echo "Error creating launch template version"
+          launch_template_id=$(aws ec2 describe-launch-templates --launch-template-names asg_launch_config --query 'LaunchTemplates[0].LaunchTemplateId')
+          echo $launch_template_id
+          aws ec2 create-launch-template-version --launch-template-name asg_launch_config --version-description WebVersion2 --source-version 1 --launch-template-data "ImageId=$latest_ami"
           aws autoscaling update-auto-scaling-group \
             --auto-scaling-group-name Ec2-Auto-Scaling-Group \
-            --launch-template "LaunchTemplateName=asg_launch_config,Version=$latest" || echo "Error updating Auto Scaling Group"
+            --launch-template LaunchTemplateId=$launch_template_id,Version='$Latest'
+      - name: Initiate Instance Refresh
+        run: |
+          aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name Ec2-Auto-Scaling-Group
+      - name: Wait for Instance Refresh to Complete
+        run: |
+          status="InProgress"
+          while [ "$status" == "InProgress" ]; do
+            sleep 60
+            status=$(aws autoscaling describe-instance-refreshes \
+                      --auto-scaling-group-name Ec2-Auto-Scaling-Group \
+                      --query 'InstanceRefreshes[*].Status' \
+                      --output text)
+          if [[ "$status" == *"InProgress"* ]]; then
+              status="InProgress"
+          else
+              status="Completed"
+          fi
+          done
