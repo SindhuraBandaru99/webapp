@@ -69,7 +69,8 @@ jobs:
         run: |
           latest_ami=$(aws ec2 describe-images \
             --filters "Name=name,Values=csye6225_*" \
-            --query 'Images | sort_by(@, &CreationDate) | [-1].ImageId' --output text) || echo "Error getting AMI ID"
+            --query 'Images | sort_by(@, &CreationDate) | [-1].ImageId' --output text) 
+          echo $latest_ami
 
           aws ec2 create-launch-template-version \
             --launch-template-name asg_launch_config \
@@ -85,3 +86,4 @@ jobs:
           aws autoscaling update-auto-scaling-group \
             --auto-scaling-group-name Ec2-Auto-Scaling-Group \
             --launch-template "LaunchTemplateName=asg_launch_config,Version=$new_version" || echo "Error updating Auto Scaling Group"
+      
