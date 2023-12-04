@@ -24,12 +24,51 @@ jobs:
           node-version: 20
       - name: Configure AWS CLI Profile
         run: |
-          aws configure --profile github set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure --profile github set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure --profile github set region us-east-1  # Replace with your desired AWS region
+          aws configure --profile github_demo set aws_access_key_id ${{ secrets.DEMO_ACCESS_KEY_ID }}
+          aws configure --profile github_demo set aws_secret_access_key ${{ secrets.DEMO_SECRET_ACCESS_KEY }}
+          aws configure --profile github_demo set region us-east-1  # Replace with your desired AWS region
         env:
           AWS_DEFAULT_REGION: us-east-1
-          AWS_PROFILE: github
+          AWS_PROFILE: github_demo
+      - name: Get the latest Debian AMI ID and Name
+        id: get-ami-id-and-name
+        run: |
+          latest_ami=$(aws ec2 describe-images \
+            --owners demo \
+            --filters "Name=architecture,Values=x86_64" "Name=state,Values=available" "Name=tag:Name,Values=csye6225_*" \
+            --query "Images | sort_by(@, &CreationDate) | [-1].{ID:ImageId,Name:Tags[?Key=='Name'].Value | [0]}" --output json)
+          latest_ami_id=$(echo $latest_ami | grep -oP '"ImageId": "\K[^"]+')
+          latest_ami_name=$(echo $latest_ami | grep -oP '"Value": "csye6225_\K[^"]+')
+
+          echo "::set-output name=latest_ami_id::$latest_ami_id"
+          echo "::set-output name=latest_ami_name::$latest_ami_name"
+
+      
+
+      # - name: Update Launch Template
+      #   run: |
+      #     aws ec2 create-launch-template-version \
+      #       --launch-template-name asg_launch_config \
+      #       --version-description "Updated version with the latest AMI" \
+      #       --source-version 1\
+      #       --block-device-mappings "[{\"DeviceName\":\"/dev/sda1\",\"Ebs\":{\"VolumeSize\":your-volume-size}}]" \
+      #       --image-id ${{ needs.get-ami-id-and-name.outputs.latest_ami_id }}
+
+      - name: Create Launch Template
+        run: |
+          aws ec2 create-launch-template \
+            --launch-template-name new_asg_launch_config \
+            --version-description "Initial version" \
+            --version-number 2 \
+            --block-device-mappings "[{\"DeviceName\":\"/dev/sda1\",\"Ebs\":{\"VolumeSize\":your-volume-size}}]" \
+            --image-id ${{ needs.get-ami-id-and-name.outputs.latest_ami_id }}
+
+      - name: Update Autoscaling Group
+        run: |
+          aws autoscaling update-auto-scaling-group \
+            --auto-scaling-group-name Ec2-Auto-Scaling-Group \
+            --launch-template "LaunchTemplateName=new_asg_launch_config,Version=2"
+
       - name: Wait for MySQL to be ready
         run: |
           until nc -z -v -w30 localhost 3306
@@ -50,6 +89,7 @@ jobs:
           wget https://releases.hashicorp.com/packer/1.8.3/packer_1.8.3_linux_amd64.zip
           unzip packer_1.8.3_linux_amd64.zip
           sudo mv packer /usr/local/bin/
+      
       - name : Packer Integration
         run: packer init .
       - name: Create AMI 
