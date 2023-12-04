@@ -60,7 +60,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.DEMO_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.DEMO_SECRET_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.ADEMO_SECRET_ACCESS_KEY }}
           aws-region: us-west-1
           aws-profile: demo
       - name: Get the latest Debian AMI ID and Name
@@ -70,3 +70,11 @@ jobs:
             --filters "Name=name,Values=csye6225_*" \
             --query 'Images | sort_by(@, &CreationDate) | [-1].ImageId' --output text) 
           echo $latest_ami
+          aws ec2 create-launch-template-version \
+            --launch-template-name asg_launch_config \
+            --version-description "New version with updated AMI" \
+            --source-version 1 \
+            --image-id $latest_ami || echo "Error creating launch template version"
+          aws autoscaling update-auto-scaling-group \
+            --auto-scaling-group-name Ec2-Auto-Scaling-Group \
+            --launch-template "LaunchTemplateName=asg_launch_config,Version=$latest" || echo "Error updating Auto Scaling Group"
