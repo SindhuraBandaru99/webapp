@@ -84,7 +84,7 @@ app.all('/healthz', (req, res) => {
 
 
   
-app.use('/demo/assignments',router);
+app.use('/v3/assignments',router);
 
 module.exports = app
 
