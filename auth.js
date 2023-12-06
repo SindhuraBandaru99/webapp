@@ -8,7 +8,7 @@ async function authenticate(req, res, next) {
     client.increment('post');
   }
   else if (req.method === 'GET') {
-    if (req.originalUrl.startsWith('/demo/assignments/')) {
+    if (req.originalUrl.startsWith('/v3/assignments/')) {
       const assignmentId = req.params.assign_id;
       if (assignmentId) {
         client.increment('getByID');
